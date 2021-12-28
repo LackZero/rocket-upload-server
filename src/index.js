@@ -2,8 +2,8 @@ import Koa from 'koa';
 import ip from 'ip';
 import koaBody from 'koa-body';
 import koaStaticCache from 'koa-static-cache';
+import logger from 'koa-logger';
 import path from 'path';
-
 import config from '../config';
 import router from './routes';
 import healthCheck from './middlewares/healthCheck';
@@ -16,8 +16,8 @@ const app = new Koa();
 // 错误捕捉，放在顶部位置
 app.use(errorHandler);
 
-// TODO: 日志打印
-// app.use(koaLogger());
+// TODO: 替换为自己的日志打印
+app.use(logger());
 
 // 健康检查
 app.use(healthCheck);
