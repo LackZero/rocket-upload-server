@@ -1,0 +1,18 @@
+# 最终生成的配置文件请查看config/index.js
+
+# 应用名
+name: 'rocket-upload-server'
+
+# 服务端口
+port: 4000
+
+# 服务前缀
+apiPrefix: '/rocket-upload-server/api'
+
+# apidoc 文档前缀
+apiDocPrefix: '/rocket-upload-server/apidoc'
+
+# 需要保存的静态资源磁盘路径
+assetsPath:
+  prod: '/var/log/rocket-upload-server'
+

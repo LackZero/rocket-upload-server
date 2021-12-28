@@ -1,0 +1,6 @@
+{
+  "extends": ["sea"],
+  "env": {
+    "jest": true
+  }
+}

@@ -1,0 +1,14 @@
+.idea
+node_modules
+.eslintcache
+ecosystem.config.js
+config/index.js
+# ignore all files in assets/
+assets/*
+# except for .gitkeep
+!.gitkeep
+# 静态资源
+dist
+apidoc
+# logs
+logs

@@ -1,0 +1,72 @@
+{
+  "name": "rocket-upload-server",
+  "version": "1.0.0",
+  "description": "底层上传文件服务",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "gen": "npm run apidoc && node ./scripts/generateConfig.js",
+    "build:dev": "npm run gen -- -e dev",
+    "start:dev": "pm2 start ecosystem.config.js",
+    "build:prod": "npm run gen -- -e prod",
+    "server_start": "pm2 start ecosystem.config.js && pm2 updatePM2",
+    "server_reload": "pm2 startOrReload ecosystem.config.js && pm2 updatePM2",
+    "server_stop": "pm2 stop ecosystem.config.js && pm2 delete ecosystem.config.js",
+    "lint:js": "eslint --cache --ext .js src/",
+    "lint:fix": "npm run lint:js -- --fix",
+    "test": "jest",
+    "apidoc": "apidoc -i src/ -o apidoc/",
+    "postinstall": "husky install",
+    "preinstall": "npx only-allow yarn"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LackZero/rocket-upload-server.git"
+  },
+  "keywords": [],
+  "author": "Sea <genghailang@iyunbao.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LackZero/rocket-upload-server/issues"
+  },
+  "homepage": "https://github.com/LackZero/rocket-upload-server#readme",
+  "lint-staged": {
+    "*.{json,css,md}": [
+      "prettier -w"
+    ],
+    "*.js": [
+      "prettier -w",
+      "npm run lint:fix"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
+    "@types/node": "^15.12.5",
+    "apidoc": "^0.50.3",
+    "eslint": "^8.5.0",
+    "eslint-config-sea": "^0.2.3",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.1.4",
+    "prettier": "^2.5.1"
+  },
+  "dependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/register": "^7.14.5",
+    "@koa/router": "^10.0.0",
+    "crypto-js": "^4.1.1",
+    "ip": "^1.1.5",
+    "joi": "^17.4.0",
+    "js-yaml": "^4.1.0",
+    "koa": "^2.13.1",
+    "koa-body": "^4.2.0",
+    "koa-static-cache": "^5.1.4",
+    "nanoid": "^3.1.30",
+    "node-fetch": "^2.6.1"
+  }
+}

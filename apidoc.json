@@ -1,0 +1,16 @@
+{
+  "name": "rocket-upload-server系统接口文档",
+  "description": "文档总描述",
+  "title": "接口文档",
+  "version": "0.0.1",
+  "url": "/rocket-upload-server/api",
+  "sampleUrl": "/rocket-upload-server/api",
+  "header": {
+    "title": "文档说明",
+    "filename": "header.md"
+  },
+  "footer": {
+    "title": "文档结尾",
+    "filename": "footer.md"
+  }
+}
