@@ -61,8 +61,7 @@ $ npm run start:dev
 
 目前支持功能：
 
-- 提供网页 url 进行截图
-- 发送钉钉消息
+- TODO 待补充
 
 更多待支持功能查看[TODO](https://github.com/LackZero/rocket-upload-server/projects/1)
 
