@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import { handleUpdateFootball } from '../controllers/upload';
+import { uploadSignedHeadersValidator } from '../validators/aSign';
 
 const router = new Router({ prefix: '/upload' });
 
@@ -19,7 +20,7 @@ const router = new Router({ prefix: '/upload' });
  *
  * @apiUse error
  */
-router.post('/file/backend/blk', handleUpdateFootball);
+router.post('/file/backend/blk', uploadSignedHeadersValidator, handleUpdateFootball);
 /**
  * @api {POST} /upload/merge/backend/mkfile 合并文件
  * @apiGroup  upload
