@@ -7,6 +7,7 @@ import fse from 'fs-extra';
 
 import config from '../../config';
 import { streamMergeRecursive } from '../utils/streamUtils';
+import { setRedisItem } from '../utils/temRedis';
 
 /**
  * @desc 解析文件
@@ -99,7 +100,7 @@ export async function uploadChunkFile(ctx) {
 }
 
 // 合并文件
-export async function combineChunkFile(data) {
+export async function combineChunkFile(data, signature) {
   // const data = {
   //   uid: 0,
   //   uploadType: 'aicenterImage',
@@ -125,13 +126,24 @@ export async function combineChunkFile(data) {
     name,
     filePath: path.resolve(chunkDirPath, name)
   }));
+  const { length } = chunkFilePaths;
   // 创建写入流
   const ws = createWriteStream(filePath);
   console.log('-------- WriteStream 开始合并 --------');
+  // 合并成功计数器
+  let count = 0;
   // 合并文件流
   streamMergeRecursive(chunkFilePaths, ws, (type, d) => {
-    // TODO 接入数据库，保存状态
+    if (type === 'end') count += 1;
+    const status = count === length ? 'success' : 'combining';
+    // TODO 接入真实redis缓存中，保存状态
+    setRedisItem(getUploadCombineStatusKey(signature), type === 'error' ? 'fail' : status);
     console.log('type', type);
     console.log('data', d);
   });
+}
+
+// 获取合并状态的缓存key
+export function getUploadCombineStatusKey(signature) {
+  return `${signature}_merge_status`;
 }

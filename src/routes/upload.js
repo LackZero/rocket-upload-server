@@ -50,7 +50,7 @@ router.post(
   handleCombineChunkFile
 );
 /**
- * @api {POST} /upload/merge/status 获取合并文件的状态
+ * @api {GET} /upload/merge/status 获取合并文件的状态
  * @apiGroup  upload
  * @apiDescription 获取合并文件的状态
  *
@@ -65,6 +65,6 @@ router.post(
  *
  * @apiUse error
  */
-router.post('/merge/status', uploadSignedHeadersValidator, handleGetCombineChunkStatus);
+router.get('/merge/status', uploadSignedHeadersValidator, handleGetCombineChunkStatus);
 
 export default router;

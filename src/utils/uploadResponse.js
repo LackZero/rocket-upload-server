@@ -12,6 +12,22 @@ const uploadCodeList = {
     type: 'IS_IN_COMBINE',
     msg: '文件合并中'
   },
+  // 8开头，服务端本身异常
+  800001: {
+    code: '800001',
+    type: 'UPLOAD_COPY_FILE_FAIL',
+    msg: '服务端保存文件失败'
+  },
+  800002: {
+    code: '800002',
+    type: 'DELETE_FILE_FAILED',
+    msg: '服务端删除文件失败'
+  },
+  800003: {
+    code: '800003',
+    type: 'COMBINE_BLK_TO_FILE_ERROR',
+    msg: '服务端合并文件失败'
+  },
   900001: {
     code: '900001',
     type: 'HTTP_SIGN_ERROR',
