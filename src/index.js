@@ -25,6 +25,8 @@ app.use(healthCheck);
 // body 解析
 app.use(
   koaBody({
+    // 是否支持 multipart-formdata 的表单
+    multipart: true,
     // delete 可以有body参数
     parsedMethods: ['POST', 'PUT', 'PATCH', 'DELETE']
   })

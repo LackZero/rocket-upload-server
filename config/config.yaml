@@ -12,7 +12,7 @@ apiPrefix: '/rocket-upload-server/api'
 # apidoc 文档前缀
 apiDocPrefix: '/rocket-upload-server/apidoc'
 
-# 需要保存的静态资源磁盘路径
+# 上传后保存的静态资源磁盘路径
 assetsPath:
   prod: '/var/log/rocket-upload-server'
 

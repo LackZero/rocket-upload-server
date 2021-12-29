@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import { handleUpdateFootball } from '../controllers/upload';
+import { handleCombineChunkFile, handleGetCombineChunkStatus, handleUploadChunkFile } from '../controllers/upload';
 import { uploadSignedHeadersValidator } from '../validators/aSign';
 
 const router = new Router({ prefix: '/upload' });
@@ -20,7 +20,7 @@ const router = new Router({ prefix: '/upload' });
  *
  * @apiUse error
  */
-router.post('/file/backend/blk', uploadSignedHeadersValidator, handleUpdateFootball);
+router.post('/file/backend/blk', uploadSignedHeadersValidator, handleUploadChunkFile);
 /**
  * @api {POST} /upload/merge/backend/mkfile 合并文件
  * @apiGroup  upload
@@ -37,7 +37,7 @@ router.post('/file/backend/blk', uploadSignedHeadersValidator, handleUpdateFootb
  *
  * @apiUse error
  */
-router.post('/merge/backend/mkfile', handleUpdateFootball);
+router.post('/merge/backend/mkfile', uploadSignedHeadersValidator, handleCombineChunkFile);
 /**
  * @api {POST} /upload/merge/status 获取合并文件的状态
  * @apiGroup  upload
@@ -54,6 +54,6 @@ router.post('/merge/backend/mkfile', handleUpdateFootball);
  *
  * @apiUse error
  */
-router.post('/merge/status', handleUpdateFootball);
+router.post('/merge/status', uploadSignedHeadersValidator, handleGetCombineChunkStatus);
 
 export default router;

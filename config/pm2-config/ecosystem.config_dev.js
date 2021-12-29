@@ -6,7 +6,7 @@ module.exports = {
       instances: 1,
       env: {
         NODE_ENV: 'dev',
-        NODE_PORT: 3000
+        NODE_PORT: 4000
       },
       watch: ['src'],
       merge_logs: true,
