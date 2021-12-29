@@ -8,6 +8,7 @@ import fse from 'fs-extra';
 import config from '../../config';
 import { streamMergeRecursive } from '../utils/streamUtils';
 import { setRedisItem } from '../utils/temRedis';
+import { throwUploadErr } from '../utils/uploadResponse';
 
 /**
  * @desc 解析文件
@@ -16,17 +17,26 @@ import { setRedisItem } from '../utils/temRedis';
  * @param ctx
  * @returns {Promise<Buffer>}
  */
+// eslint-disable-next-line consistent-return
 export async function parseFile(ctx) {
-  const { headers } = ctx.request;
-  // console.log('request', ctx.req);
-  // 因为遇到stream.on is not a function ，所以将第一个参数ctx.request改为ctx.req
-  // 参考 https://segmentfault.com/q/1010000011450685
-  const result = await getRawBody(ctx.req, {
-    // limit: '1mb',
-    // encoding: ctx.request.charset,
-    length: headers['content-length']
-  });
-  return result;
+  try {
+    const { headers } = ctx.request;
+    // console.log('request', ctx.req);
+    // 因为遇到stream.on is not a function ，所以将第一个参数ctx.request改为ctx.req
+    // 参考 https://segmentfault.com/q/1010000011450685
+    const result = await getRawBody(ctx.req, {
+      // limit: 1,
+      // encoding: ctx.request.charset,
+      length: headers['content-length']
+    });
+    return result;
+  } catch (e) {
+    if (e.type === 'entity.too.large') {
+      throwUploadErr('100002');
+    } else {
+      throw e;
+    }
+  }
 }
 
 /**

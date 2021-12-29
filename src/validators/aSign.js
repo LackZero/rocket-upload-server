@@ -1,3 +1,5 @@
+import { throwUploadErr } from '../utils/uploadResponse';
+
 const prefix = 'x-xfm';
 /* 上传业务中需要的加签头 */
 // eslint-disable-next-line no-unused-vars
@@ -16,5 +18,11 @@ export async function uploadSignedHeadersValidator(ctx, next) {
   // console.log('ctx', ctx);
   // eslint-disable-next-line no-unused-vars
   const { headers } = ctx.request;
+  const length = headers['content-length'];
+  console.log('length', length, length === false);
+  // !"0" 为true，所以使用==
+  if (length === '0') {
+    throwUploadErr('200002');
+  }
   await next();
 }

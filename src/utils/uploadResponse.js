@@ -6,11 +6,27 @@ const uploadCodeList = {
     type: 'Normal',
     msg: '已完成'
   },
+  100002: {
+    code: '100002',
+    type: 'LIMIT_MAXSIZE_ERROR',
+    msg: '文件超过最大限制'
+  },
   // 大文件合并的正常返回，不会返回给用户，返回给调用方，调用方会自动执行下一个请求
   100016: {
     code: '100016',
     type: 'IS_IN_COMBINE',
     msg: '文件合并中'
+  },
+  // 2开头 服务端发生错误
+  200001: {
+    code: '200001',
+    type: 'MK_DIR_ERROR',
+    msg: '"创建临时目录失败'
+  },
+  200002: {
+    code: '200002',
+    type: 'EMPTY_FILE',
+    msg: '文件为空，请上传文件'
   },
   // 8开头，服务端本身异常
   800001: {
