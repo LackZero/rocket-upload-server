@@ -13,7 +13,7 @@ const HEADERS = [
 ];
 // TODO 加签校验
 export async function uploadSignedHeadersValidator(ctx, next) {
-  console.log('ctx', ctx);
+  // console.log('ctx', ctx);
   // eslint-disable-next-line no-unused-vars
   const { headers } = ctx.request;
   await next();

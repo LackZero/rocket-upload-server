@@ -1,6 +1,12 @@
 import Router from '@koa/router';
-import { handleCombineChunkFile, handleGetCombineChunkStatus, handleUploadChunkFile } from '../controllers/upload';
+import {
+  handleCombineChunkFile,
+  handleGetCombineChunkStatus,
+  handleUploadChunkFile
+} from '../controllers/upload';
 import { uploadSignedHeadersValidator } from '../validators/aSign';
+import validatorMiddleware from '../middlewares/validator';
+import { uploadCombineChunkValidator } from '../validators/uploadValidator';
 
 const router = new Router({ prefix: '/upload' });
 
@@ -37,7 +43,12 @@ router.post('/file/backend/blk', uploadSignedHeadersValidator, handleUploadChunk
  *
  * @apiUse error
  */
-router.post('/merge/backend/mkfile', uploadSignedHeadersValidator, handleCombineChunkFile);
+router.post(
+  '/merge/backend/mkfile',
+  uploadSignedHeadersValidator,
+  validatorMiddleware(uploadCombineChunkValidator),
+  handleCombineChunkFile
+);
 /**
  * @api {POST} /upload/merge/status 获取合并文件的状态
  * @apiGroup  upload
