@@ -7,7 +7,6 @@ const uploadCodeList = {
     msg: '已完成'
   },
   // 1开头  参数错误，校验错误，直接和间接由请求产生的错误
-  // 暂不使用
   100001: {
     code: '100001',
     type: 'PARAMETER_VALIDATE_ERROR',

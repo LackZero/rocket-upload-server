@@ -27,3 +27,16 @@ audioExtnameValida: []
 
 # 支持的文本类型，TODO 后续从配置中心拿取
 documentExtnameValida: []
+
+# 给上传的 app 加密解密的密钥
+uploadAppSecretKey: RocketUploadServerAppKeydxs01w3z
+
+# 支持上传 App & 类型 & 秘钥，TODO 后续从配置中心拿取（数据库
+uploadApp:
+  testApp:
+    secret: 1fdb6a99c7ba1d
+    uploadType: [ testAppImage ]
+  aicenter:
+    secret: 6c04b5180a099119
+    uploadType: [aicenterImage]
+

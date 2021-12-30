@@ -1,4 +1,4 @@
-export const headersPrefix = 'x-xfm';
+export const headersPrefix = 'rus';
 /* 上传业务中需要的加签头 */
 // eslint-disable-next-line no-unused-vars
 const HEADERS = [

@@ -24,6 +24,9 @@ export async function handleCombineChunkFile(ctx) {
 // 获取合并文件的状态
 export async function handleGetCombineChunkStatus(ctx) {
   const { statusKey } = ctx.request.query;
+  if (!statusKey) {
+    throwUploadErr('100001');
+  }
   const status = getRedisItem(getUploadCombineStatusKey(statusKey));
   switch (status) {
     case 'combining':

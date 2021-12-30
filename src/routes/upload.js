@@ -4,7 +4,7 @@ import {
   handleGetCombineChunkStatus,
   handleUploadChunkFile
 } from '../controllers/upload';
-import { uploadSignedHeadersValidator } from '../validators/aSign';
+import { uploadHeadersValidator } from '../validators/aSign';
 import validatorMiddleware from '../middlewares/validator';
 import { uploadCombineChunkValidator } from '../validators/uploadValidator';
 
@@ -26,7 +26,7 @@ const router = new Router({ prefix: '/upload' });
  *
  * @apiUse error
  */
-router.post('/file/backend/blk', uploadSignedHeadersValidator, handleUploadChunkFile);
+router.post('/file/backend/blk', uploadHeadersValidator, handleUploadChunkFile);
 /**
  * @api {POST} /upload/merge/backend/mkfile 合并文件
  * @apiGroup  upload
@@ -45,7 +45,7 @@ router.post('/file/backend/blk', uploadSignedHeadersValidator, handleUploadChunk
  */
 router.post(
   '/merge/backend/mkfile',
-  uploadSignedHeadersValidator,
+  uploadHeadersValidator,
   validatorMiddleware(uploadCombineChunkValidator),
   handleCombineChunkFile
 );
@@ -65,6 +65,6 @@ router.post(
  *
  * @apiUse error
  */
-router.get('/merge/status', uploadSignedHeadersValidator, handleGetCombineChunkStatus);
+router.get('/merge/status', handleGetCombineChunkStatus);
 
 export default router;
