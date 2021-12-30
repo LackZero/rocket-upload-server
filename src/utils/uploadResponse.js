@@ -6,11 +6,48 @@ const uploadCodeList = {
     type: 'Normal',
     msg: '已完成'
   },
+  // 1开头  参数错误，校验错误，直接和间接由请求产生的错误
+  // 暂不使用
+  100001: {
+    code: '100001',
+    type: 'PARAMETER_VALIDATE_ERROR',
+    msg: '参数校验错误'
+  },
   100002: {
     code: '100002',
     type: 'LIMIT_MAXSIZE_ERROR',
     msg: '文件超过最大限制'
   },
+  // 暂不使用
+  100004: {
+    code: '100004',
+    type: 'IMAGE_EXTNAME_VALIDA_ERROR',
+    msg: '图片类型后缀名校验不通过'
+  },
+  // 暂不使用
+  100005: {
+    code: '100005',
+    type: 'AUDIO_VIDEO_EXTNAME_VALIDA_ERROR',
+    msg: '音视频类型后缀名校验不通过'
+  },
+  // 暂不使用
+  100006: {
+    code: '100006',
+    type: 'DOCUMENT_EXTNAME_VALIDA_ERROR',
+    msg: '文本类型后缀名校验不通过'
+  },
+  // 暂不使用
+  100012: {
+    code: '100012',
+    type: 'ILLEGAL_BLK_NAME',
+    msg: '非法分块名称'
+  },
+  100013: {
+    code: '100012',
+    type: 'BLK_NAME_FIND_NULL',
+    msg: '未找到对应名称的文件块'
+  },
+
   // 大文件合并的正常返回，不会返回给用户，返回给调用方，调用方会自动执行下一个请求
   100016: {
     code: '100016',
@@ -54,10 +91,14 @@ const uploadCodeList = {
 /**
  * @desc 上传时扔出错误
  * @param {string} code 错误Code
+ * @param {object} [errInfo]
  */
-export function throwUploadErr(code) {
+export function throwUploadErr(code, errInfo = {}) {
   const obj = { ...uploadCodeList[code] };
-  throw new Error(`上传文件失败，${JSON.stringify(obj)}`);
+  const { name } = errInfo;
+  const error = new Error(`上传文件失败，${JSON.stringify(obj)}`);
+  if (name) error.name = name;
+  throw error;
 }
 
 // 上传的反馈

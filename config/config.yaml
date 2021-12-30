@@ -16,3 +16,14 @@ apiDocPrefix: '/rocket-upload-server/apidoc'
 assetsPath:
   prod: '/var/log/rocket-upload-server'
 
+# 支持的图片类型，TODO 后续从配置中心拿取
+imageExtnameValida: [jpg,jpeg,bmp,gif,png,tiff,pcx,webp]
+
+# 支持的视频类型，TODO 后续从配置中心拿取
+videoExtnameValida: [mp4,]
+
+# 支持的音频类型，TODO 后续从配置中心拿取
+audioExtnameValida: []
+
+# 支持的文本类型，TODO 后续从配置中心拿取
+documentExtnameValida: []
