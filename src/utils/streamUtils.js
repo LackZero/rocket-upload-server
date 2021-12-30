@@ -4,7 +4,7 @@ import { createReadStream } from 'fs';
 
 /**
  * @desc 多个文件通过Stream合并为一个文件
- * 设置可读流的 end 为 false 可保持写入流一直处于打开状态。
+ * 设置可读流的 end 为 false 可保持写入流一直处于打开状态，不自动关闭
  * 如何将多个文件通过 Stream 合并为一个文件，也是通过这种方式，一开始可写流处于打开状态，
  * 直到所有的可读流结束，再将可写流给关闭。
  * @param {object[]} fileList
@@ -28,7 +28,7 @@ export function streamMergeRecursive(fileList, fileWriteStream, callback) {
   // 获取当前的可读流
   const currentReadStream = createReadStream(chunkFilePath);
   // 监听currentReadStream的on('data'),将读取到的内容调用fileWriteStream.write方法
-  // end:true 读取结束时终止写入流,设置 end 为 false 写入的目标流(fileWriteStream)将会一直处于打开状态
+  // end:true 读取结束时终止写入流,设置 end 为 false 写入的目标流(fileWriteStream)将会一直处于打开状态，不自动关闭
   currentReadStream.pipe(fileWriteStream, { end: false });
   // 监听可读流的 end 事件，结束之后递归合并下一个文件 或者 手动调用可写流的 end 事件
   currentReadStream.on('end', () => {
