@@ -36,7 +36,7 @@ $ npm run start:dev
 ├── commitlint.config.js # 提交规范配置
 ├── config # 项目配置文件
 │   ├── config.yaml
-│   ├── mysql-config # mysql 的配置文档
+│   ├── database-config # 数据库 mysql 的配置文档
 │   └── pm2-config # pm2 的配置文件
 ├── index.js # 服务启动文件
 ├── package.json
