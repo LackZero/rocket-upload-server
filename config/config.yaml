@@ -16,6 +16,9 @@ apiDocPrefix: '/rocket-upload-server/apidoc'
 assetsPath:
   prod: '/var/log/rocket-upload-server'
 
+#  支持上传的类型
+uploadType: [Image,Video,Audio,Doc]
+
 # 支持的图片类型，TODO 后续从配置中心拿取
 imageExtnameValida: [jpg,jpeg,bmp,gif,png,tiff,pcx,webp]
 

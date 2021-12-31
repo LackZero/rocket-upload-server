@@ -1,5 +1,7 @@
 import response from '../utils/response';
+import { addNewAppsService } from '../services/apps';
 
 export async function handleAddNewApp(ctx) {
-  response.success(ctx, 'success');
+  const { id } = await addNewAppsService(ctx.request.body);
+  response.success(ctx, { id });
 }

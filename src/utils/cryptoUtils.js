@@ -65,12 +65,12 @@ const appKeyAlgorithm = 'aes-256-ctr';
  * @desc 给 appKey 进行加密，生成APP_SECRET
  * @param appKey
  * @param {string} key 加密解密的密钥：密钥必须是 8/16/32 位，
- * @param {string} iv 初始向量，规则与 key 一样
+ * @param {string} [iv] 初始向量，规则与 key 一样
  * @returns {{cipherText: string, iv: string}}
  */
 export function encodeAppKeyToSecret(appKey, key, iv) {
   const newIv = iv || crypto.randomBytes(8).toString('hex');
-  const cipher = crypto.createCipheriv(appKeyAlgorithm, key, iv);
+  const cipher = crypto.createCipheriv(appKeyAlgorithm, key, newIv);
   let cipherText = cipher.update(appKey, 'utf8', 'hex');
   cipherText += cipher.final('hex');
   return {
