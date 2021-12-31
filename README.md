@@ -45,8 +45,8 @@ $ npm run start:dev
 ├── src # 服务代码目录
 │   ├── apidocs # apidoc 中的一些变量定义以及历史api
 │   ├── controllers # 操作层目录
-│   ├── db # 提供db服务 以及 初始化sql脚本
 │   ├── index.js # 服务入口文件
+│   ├── models # 提供模型文件 以及 初始化sql脚本，也可以自己运行models下的init.js文件
 │   ├── middlewares # 中间件
 │   ├── routes # 路由目录
 │   ├── services # 业务层目录
