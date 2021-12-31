@@ -27,10 +27,12 @@ const databaseConfig = {
     // 默认情况下, destroy() 方法会删除数据，
     // 设置 paranoid 为 true 时，将会更新 deletedAt 字段，并不会真实删除数据。
     paranoid: true,
-    // 为 createdAt,updatedAt,deletedAt 列指定自定义名称
-    createdAt: 'created_at',
-    updatedAt: 'updated_at',
-    deletedAt: 'deleted_at'
+    // 为 createdAt,updatedAt,deletedAt 列指定自定义名称,可以不用单独设定
+    // createdAt: 'created_at',
+    // updatedAt: 'updated_at',
+    // deletedAt: 'deleted_at'
+    // 将所有属性的 field 参数设置为其名称的 snake_case 版本
+    underscored: true
   }
 };
 

@@ -1,6 +1,6 @@
 import Router from '@koa/router';
-import { handleCtxThrowError, handleThrowError, handlePrintError } from '../controllers/errors';
-import { handleAddNewApp } from '../controllers/apps';
+import { handleThrowError, handlePrintError } from '../controllers/errors';
+import { handleAddNewApp, handleGetAllApps } from '../controllers/apps';
 import validatorMiddleware from '../middlewares/validator';
 import { addAppValidators } from '../validators/apps';
 
@@ -11,7 +11,7 @@ import { addAppValidators } from '../validators/apps';
 
 const router = new Router({ prefix: '/apps' });
 
-router.get('/list', handleCtxThrowError);
+router.get('/list', handleGetAllApps);
 router.post('/add', validatorMiddleware(addAppValidators), handleAddNewApp);
 router.get('/get/:id', handleThrowError);
 router.put('/edit/:id', handlePrintError);
