@@ -30,9 +30,10 @@ export async function addNewAppsService(params) {
   const { cipherText } = encodeAppKeyToSecret(name, config.uploadAppSecretKey);
   const result = await Apps.create({ name, secret: cipherText });
   // debugger;
-  console.log('result', result);
+  // console.log('result', result);
   const uploadTypeData = uploadTypes.map((uploadType) => ({
     name: `${name}${uploadType}`,
+    uploadType,
     camelCase: uploadType
   }));
   // https://stackoverflow.com/questions/59361200/bulk-insertion-in-sequelize-hasmany-association
@@ -50,4 +51,54 @@ export async function addNewAppsService(params) {
 export async function getAppInfoByIdService(id) {
   const result = await Apps.findOne({ where: { id }, include: 'appsType' });
   return result;
+}
+
+// 编辑app信息
+export async function editAppInfoService(params) {
+  const { id, name, uploadTypes = [] } = params;
+  const { name: originName, appsType } = await getAppInfoByIdService(id);
+  // name 是否修改
+  const isNameModify = name !== originName;
+  // 更改了上传类型
+  if (uploadTypes.length) {
+    const delIds = [];
+    const updateData = [];
+    const usedTypes = [];
+    appsType.forEach((item) => {
+      const { uploadType, id } = item;
+      // 不包含则删除
+      if (!uploadTypes.includes(uploadType)) {
+        delIds.push(id);
+      } else {
+        usedTypes.push(uploadType);
+        // 包含则看名字是否需要修改
+        // eslint-disable-next-line no-lonely-if
+        if (isNameModify) {
+          updateData.push({ id, name: `${name}${uploadType}` });
+        }
+      }
+    });
+    // 过滤出没有使用过的type，用来新增数据
+    const createData = uploadTypes
+      .filter((type) => !usedTypes.includes(type))
+      .map((uploadType) => ({
+        appsId: id,
+        name: `${name}${uploadType}`,
+        uploadType
+      }));
+    await Promise.all([
+      // 批量删除 (硬删除
+      AppsType.destroy({ where: { id: delIds }, force: true }),
+      // 批量更新，updateOnDuplicate 如果重复，更新指定字段，updateOnDuplicate
+      AppsType.bulkCreate(updateData, { updateOnDuplicate: ['name', 'updatedAt'] }),
+      // 批量增加
+      AppsType.bulkCreate(createData)
+    ]);
+  }
+
+  if (isNameModify) {
+    await Apps.update({ name }, { where: { id } });
+  }
+
+  return true;
 }

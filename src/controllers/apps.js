@@ -1,5 +1,10 @@
 import response from '../utils/response';
-import { addNewAppsService, getAllAppsService, getAppInfoByIdService } from '../services/apps';
+import {
+  addNewAppsService,
+  editAppInfoService,
+  getAllAppsService,
+  getAppInfoByIdService
+} from '../services/apps';
 
 export async function handleGetAllApps(ctx) {
   const data = await getAllAppsService(ctx.request.body);
@@ -14,5 +19,10 @@ export async function handleAddNewApp(ctx) {
 export async function handleGetAppInfoById(ctx) {
   const { id } = ctx.params;
   const data = await getAppInfoByIdService(id);
+  response.success(ctx, data);
+}
+
+export async function handleEditAppInfoById(ctx) {
+  const data = await editAppInfoService(ctx.request.body);
   response.success(ctx, data);
 }

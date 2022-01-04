@@ -21,8 +21,7 @@ const AppsType = sequelize.define('apps_type', {
     // 唯一
     unique: true
   },
-  // 临时测试 underscored 是否生效，TODO 后续移除
-  camelCase: {
+  uploadType: {
     type: DataTypes.STRING(45)
   }
   // apps_id: {
