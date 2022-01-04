@@ -2,13 +2,25 @@ import { encodeAppKeyToSecret } from '../utils/cryptoUtils';
 import config from '../../config';
 import Apps from '../models/Apps';
 import AppsType from '../models/AppsType';
+import { sequelize } from '../utils/sequelize';
 
 // 获取所有app信息
 export async function getAllAppsService() {
   const result = await Apps.findAll({ include: 'appsType' });
   // 两种调用方式都可以
   // const result = await Apps.findAll({ include: { model: AppsType, as: 'appsType' } });
-  const result1 = await AppsType.findAll({ include: { model: Apps, as: 'app' } });
+  const result1 = await AppsType.findAll({
+    include: {
+      model: Apps,
+      as: 'app',
+      // app:{} 不展示属性，
+      attributes: []
+    },
+    // 扁平化数据
+    attributes: {
+      include: [[sequelize.col('app.name'), 'appName']]
+    }
+  });
   console.log('result', result);
   return { result, result1 };
 }
