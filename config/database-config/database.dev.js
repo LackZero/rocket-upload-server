@@ -2,6 +2,20 @@
 const databaseConfig = {
   // 使用哪个数据库程序
   dialect: 'mysql',
+  // mysql2 参数
+  dialectOptions: {
+    // useUTC: false, // for reading from database
+    // timezone: '+08:00',
+    typeCast(field, next) {
+      // for reading from database
+      if (field.type === 'DATETIME') {
+        return field.string();
+      }
+      return next();
+    }
+  },
+  // 写入数据库时间为中国时间
+  timezone: '+08:00',
   database: 'rocket_test',
   username: 'root',
   password: '12345678',
