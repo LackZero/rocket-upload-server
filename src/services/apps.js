@@ -87,7 +87,9 @@ export async function editAppInfoService(params) {
         uploadType
       }));
     await Promise.all([
-      // 批量删除 (硬删除
+      // 批量删除 (硬删除,
+      // 因为 unique index: 如果表有唯一索引, 比如用户表的邮箱列有唯一索引,
+      // 那么在做了软删除后被删除行的邮箱从数据角度任然在起作用, 所以不能创建相同邮箱的用户.
       AppsType.destroy({ where: { id: delIds }, force: true }),
       // 批量更新，updateOnDuplicate 如果重复，更新指定字段，updateOnDuplicate
       AppsType.bulkCreate(updateData, { updateOnDuplicate: ['name', 'updatedAt'] }),
@@ -100,5 +102,26 @@ export async function editAppInfoService(params) {
     await Apps.update({ name }, { where: { id } });
   }
 
+  return true;
+}
+
+// 删除app
+export async function delAppByIdService(id) {
+  // 获取实例
+  const app = await Apps.findByPk(id);
+  // console.log('app', app, id);
+  // 获取关联的实例
+  const appTypes = await app.getAppsType();
+  const calls = [app.destroy()];
+  appTypes.forEach((model) => {
+    calls.push(model.destroy());
+  });
+  // console.log('appTypes', appTypes);
+
+  const result = await Promise.all(calls);
+  console.log('result', result);
+
+  // const result = await Apps.destroy({ where: { id } });
+  // console.log('result', result);
   return true;
 }

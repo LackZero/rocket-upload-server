@@ -1,6 +1,7 @@
 import response from '../utils/response';
 import {
   addNewAppsService,
+  delAppByIdService,
   editAppInfoService,
   getAllAppsService,
   getAppInfoByIdService
@@ -24,5 +25,11 @@ export async function handleGetAppInfoById(ctx) {
 
 export async function handleEditAppInfoById(ctx) {
   const data = await editAppInfoService(ctx.request.body);
+  response.success(ctx, data);
+}
+
+export async function handleDelAppInfoById(ctx) {
+  const { id } = ctx.params;
+  const data = await delAppByIdService(id);
   response.success(ctx, data);
 }

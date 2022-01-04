@@ -1,7 +1,7 @@
 import Router from '@koa/router';
-import { handlePrintError } from '../controllers/errors';
 import {
   handleAddNewApp,
+  handleDelAppInfoById,
   handleEditAppInfoById,
   handleGetAllApps,
   handleGetAppInfoById
@@ -20,6 +20,6 @@ router.get('/list', handleGetAllApps);
 router.post('/add', validatorMiddleware(addAppValidators), handleAddNewApp);
 router.get('/get/:id', handleGetAppInfoById);
 router.put('/edit/:id', validatorMiddleware(editAppValidators), handleEditAppInfoById);
-router.del('/del/:id', handlePrintError);
+router.del('/del/:id', handleDelAppInfoById);
 
 export default router;
