@@ -109,9 +109,11 @@ export async function editAppInfoService(params) {
 export async function delAppByIdService(id) {
   // 获取实例
   const app = await Apps.findByPk(id);
+  if (!app) throw new Error('删除失败，请传入有效的Id');
   // console.log('app', app, id);
   // 获取关联的实例
   const appTypes = await app.getAppsType();
+  // 开始删除
   const calls = [app.destroy()];
   appTypes.forEach((model) => {
     calls.push(model.destroy());
