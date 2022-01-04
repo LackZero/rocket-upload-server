@@ -12,13 +12,19 @@ $ yarn
 
 > 为了更好的开发体验，建议本地开发环境 node 版本>=10
 
-2. generate config
+2. 配置自己的数据库信息（可选
+
+请按照 [database.dev.js](./config/database-config/database.dev.js) 配置自己的数据库信息，
+
+复制 [init.sql](./src/models/init.sql) 中的 sql 至 mysql 中
+
+3. generate config
 
 ```bash
 $ npm run build:dev
 ```
 
-3. run
+4. run
 
 ```bash
 $ npm run start:dev

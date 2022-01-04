@@ -39,6 +39,12 @@ Apps.hasMany(AppsType, {
   // 也可以model:"as(自定义的名字)"
   // 也影响着 方法名称 https://www.sequelize.com.cn/core-concepts/assocs#%E6%B3%A8%E6%84%8F-%E6%96%B9%E6%B3%95%E5%90%8D%E7%A7%B0
   as: 'appsType',
+  // as: {
+  //   // 指定单复数别名，方法也可以有单复数的形式
+  //   // https://www.sequelize.com.cn/other-topics/naming-strategies#%E5%AE%9A%E4%B9%89%E5%88%AB%E5%90%8D%E6%97%B6%E8%A6%86%E7%9B%96%E5%8D%95%E6%95%B0%E5%92%8C%E5%A4%8D%E6%95%B0
+  //   singular: 'appsType',
+  //   plural: 'appsTypes'
+  // },
   foreignKey: 'appsId', // 外键名,
   sourceKey: 'id' // 目标健
 });
