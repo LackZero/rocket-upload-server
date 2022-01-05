@@ -52,7 +52,7 @@ const Apps = sequelize.define(
           options.attributes = { exclude: ['logicDeletedId'] };
         }
         if (attributes && !Array.isArray(attributes)) {
-          const { exclude } = attributes;
+          const { exclude = [] } = attributes;
           attributes.exclude = [...exclude, 'logicDeletedId'];
         }
       },

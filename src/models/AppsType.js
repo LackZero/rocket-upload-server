@@ -4,31 +4,62 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../utils/sequelize';
 import Apps from './Apps';
 
-const AppsType = sequelize.define('apps_type', {
-  id: {
-    // Sequelize 库由 DataTypes 对象为字段定义类型
-    type: DataTypes.INTEGER(11),
-    // 允许为空
-    allowNull: false,
-    // 主键
-    primaryKey: true,
-    // 自增
-    autoIncrement: true
+const AppsType = sequelize.define(
+  'apps_type',
+  {
+    id: {
+      // Sequelize 库由 DataTypes 对象为字段定义类型
+      type: DataTypes.INTEGER(11),
+      // 允许为空
+      allowNull: false,
+      // 主键
+      primaryKey: true,
+      // 自增
+      autoIncrement: true
+    },
+    name: {
+      type: DataTypes.STRING(45),
+      allowNull: false,
+      unique: 'uniqueCompositeIndex'
+    },
+    logicDeletedId: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      unique: 'uniqueCompositeIndex'
+    },
+    uploadType: {
+      type: DataTypes.STRING(45)
+    }
   },
-  name: {
-    type: DataTypes.STRING(45),
-    allowNull: false,
-    // 唯一
-    unique: true
-  },
-  uploadType: {
-    type: DataTypes.STRING(45)
+  {
+    hooks: {
+      beforeFind(options) {
+        console.log('AppsType options', options);
+        const { attributes } = options;
+        // 排除 logicDeletedId 的获取
+        if (!attributes) {
+          // eslint-disable-next-line no-param-reassign
+          options.attributes = { exclude: ['logicDeletedId'] };
+        }
+        if (attributes && !Array.isArray(attributes)) {
+          const { exclude = [] } = attributes;
+          attributes.exclude = [...exclude, 'logicDeletedId'];
+        }
+        console.log('options', options);
+      },
+      beforeDestroy: (model) => {
+        // 将删除标识的删除状态设为id（推荐，使用主键确保不会发生索引冲突，并且实现简单）
+        // eslint-disable-next-line no-param-reassign
+        model.logicDeletedId = model.id;
+        console.log('model', model);
+      },
+      // TODO 批量删除赋值问题，研究下deleteAt是怎么被更新的
+      beforeBulkDestroy: (options) => {
+        console.log('beforeBulkDestroy', options);
+      }
+    }
   }
-  // apps_id: {
-  //   type: DataTypes.INTEGER(11),
-  //   allowNull: false
-  // }
-});
+);
 
 // 创建关联关系，查询Apps 带出 AppsType 关系
 // 前关联关系相当于 Apps 为主表，AppsType 为关联表，

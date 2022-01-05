@@ -86,11 +86,12 @@ export async function editAppInfoService(params) {
         name: `${name}${uploadType}`,
         uploadType
       }));
+    console.log('delIds', delIds);
     await Promise.all([
-      // 批量删除 (硬删除,
+      // 批量删除,
       // 因为 unique index: 如果表有唯一索引, 比如用户表的邮箱列有唯一索引,
       // 那么在做了软删除后被删除行的邮箱从数据角度任然在起作用, 所以不能创建相同邮箱的用户.
-      AppsType.destroy({ where: { id: delIds }, force: true }),
+      AppsType.destroy({ where: { id: delIds } }),
       // 批量更新，updateOnDuplicate 如果重复，更新指定字段，updateOnDuplicate
       AppsType.bulkCreate(updateData, { updateOnDuplicate: ['name', 'updatedAt'] }),
       // 批量增加
