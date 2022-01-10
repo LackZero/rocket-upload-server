@@ -33,29 +33,33 @@ const AppsType = sequelize.define(
   },
   {
     hooks: {
+      // eslint-disable-next-line no-unused-vars
       beforeFind(options) {
-        console.log('AppsType options', options);
-        const { attributes } = options;
-        // 排除 logicDeletedId 的获取
-        if (!attributes) {
-          // eslint-disable-next-line no-param-reassign
-          options.attributes = { exclude: ['logicDeletedId'] };
-        }
-        if (attributes && !Array.isArray(attributes)) {
-          const { exclude = [] } = attributes;
-          attributes.exclude = [...exclude, 'logicDeletedId'];
-        }
-        console.log('options', options);
+        // console.log('AppsType options', options);
+        // const { attributes } = options;
+        // // 排除 logicDeletedId 的获取
+        // if (!attributes) {
+        //   // eslint-disable-next-line no-param-reassign
+        //   options.attributes = { exclude: ['logicDeletedId'] };
+        // }
+        // if (attributes && !Array.isArray(attributes)) {
+        //   const { exclude = [] } = attributes;
+        //   attributes.exclude = [...exclude, 'logicDeletedId'];
+        // }
+        // console.log('options', options);
       },
-      beforeDestroy: (model) => {
+      async beforeDestroy(model) {
         // 将删除标识的删除状态设为id（推荐，使用主键确保不会发生索引冲突，并且实现简单）
-        // eslint-disable-next-line no-param-reassign
-        model.logicDeletedId = model.id;
-        console.log('model', model);
+        await model.update({ logicDeletedId: model.id });
       },
-      // TODO 批量删除赋值问题，研究下deleteAt是怎么被更新的
+      //  使用where 条件判断时 会触发下面批量删除赋值
+      //  setterMethods 对deletedAt 字段无效，放弃挣扎了
+      //  https://www.sequelize.com.cn/core-concepts/getters-setters-virtuals#%E8%AE%BE%E7%BD%AE%E5%99%A8
       beforeBulkDestroy: (options) => {
-        console.log('beforeBulkDestroy', options);
+        // 触发单个 hook 删除
+        // 可能会严重影响性能,具体取决于所涉及的记录数
+        // eslint-disable-next-line no-param-reassign
+        options.individualHooks = true;
       }
     }
   }
