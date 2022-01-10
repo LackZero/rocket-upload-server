@@ -58,18 +58,24 @@ const Apps = sequelize.define(
         //   attributes.exclude = [...exclude, 'logicDeletedId'];
         // }
       },
-      // setterMethods 对deletedAt 字段无效，放弃挣扎了
-      // https://www.sequelize.com.cn/core-concepts/getters-setters-virtuals#%E8%AE%BE%E7%BD%AE%E5%99%A8
-      beforeDestroy: async (model) => {
-        // https://github.com/sequelize/sequelize/issues/9318#issuecomment-382569200
-        // 将删除标识的删除状态设为id（推荐，使用主键确保不会发生索引冲突，并且实现简单）
-        await model.update({ logicDeletedId: model.id });
-      },
       beforeBulkDestroy: (options) => {
         // 触发单个 hook 删除
         // 可能会严重影响性能,具体取决于所涉及的记录数
         // eslint-disable-next-line no-param-reassign
         options.individualHooks = true;
+      },
+      // setterMethods 对deletedAt 字段无效，放弃挣扎了
+      // https://www.sequelize.com.cn/core-concepts/getters-setters-virtuals#%E8%AE%BE%E7%BD%AE%E5%99%A8
+      beforeDestroy: async (instance) => {
+        // https://github.com/sequelize/sequelize/issues/9318#issuecomment-382569200
+        // 将删除标识的删除状态设为id（推荐，使用主键确保不会发生索引冲突，并且实现简单）
+        await instance.update({ logicDeletedId: instance.id });
+      },
+      async afterDestroy(instance) {
+        // 删除 关联的 appsType 实例
+        const appTypes = await instance.getAppsType();
+        const calls = appTypes.map((appsType) => appsType.destroy());
+        await Promise.all(calls);
       }
     }
   }

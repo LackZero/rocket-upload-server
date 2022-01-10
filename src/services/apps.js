@@ -111,18 +111,20 @@ export async function delAppByIdService(id) {
   // 获取实例
   const app = await Apps.findByPk(id);
   if (!app) throw new Error('删除失败，请传入有效的Id');
+  await app.destroy();
+  // 下面的逻辑已移步至hooks中
   // console.log('app', app, id);
   // 获取关联的实例
-  const appTypes = await app.getAppsType();
-  // 开始删除
-  const calls = [app.destroy()];
-  appTypes.forEach((model) => {
-    calls.push(model.destroy());
-  });
-  // console.log('appTypes', appTypes);
-
-  const result = await Promise.all(calls);
-  console.log('result', result);
+  // const appTypes = await app.getAppsType();
+  // // 开始删除
+  // const calls = [app.destroy()];
+  // appTypes.forEach((model) => {
+  //   calls.push(model.destroy());
+  // });
+  // // console.log('appTypes', appTypes);
+  //
+  // const result = await Promise.all(calls);
+  // console.log('result', result);
 
   // const result = await Apps.destroy({ where: { id } });
   // console.log('result', result);
