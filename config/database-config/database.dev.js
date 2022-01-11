@@ -33,9 +33,10 @@ const databaseConfig = {
     // 是否冻结表名，停止 Sequelize 执行自动复数化. 这样,Sequelize 将推断表名称等于模型名称,而无需进行任何修改
     // 默认情况下，表名会转换为复数形式
     freezeTableName: true,
-    // 是否为表添加 createdAt 和 updatedAt 字段
+    // 默认情况下,Sequelize 使用数据类型 DataTypes.DATE 自动向每个模型添加 createdAt 和 updatedAt 字段.
     // createdAt 记录表的创建时间
     // updatedAt 记录字段更新时间
+    // 时间戳
     timestamps: true,
     // 是否为表添加 deletedAt 字段
     // 默认情况下, destroy() 方法会删除数据，
