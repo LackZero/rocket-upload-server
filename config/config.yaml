@@ -12,15 +12,15 @@ apiPrefix: '/rocket-upload-server/api'
 # apidoc 文档前缀
 apiDocPrefix: '/rocket-upload-server/apidoc'
 
-# 上传后的静态资源 url访问路径
+# 上传后的静态资源 url访问路径（注 和 groupDir 保持一致
 apiGroupAssetsPrefix: '/rocket-upload-server/group'
 
 # 上传后保存的静态资源磁盘路径
 assetsPath:
   prod: '/var/log/rocket-upload-server'
 
-# 组合文件相对assetsPath的目录
-groupRelativePath: './group'
+# 组合文件夹的名字
+groupDir: 'group'
 
 #  支持上传的类型
 uploadType: [Image,Video,Audio,Doc]

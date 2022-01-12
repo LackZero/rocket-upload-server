@@ -5,12 +5,16 @@ import { createWriteStream } from 'fs';
 import { writeFile } from 'fs/promises';
 import fse from 'fs-extra';
 
+import { nanoid } from 'nanoid';
+import ip from 'ip';
 import config from '../../config';
 import { streamMergeRecursive } from '../utils/streamUtils';
 import { setRedisItem } from '../utils/temRedis';
 import { throwUploadErr } from '../utils/uploadResponse';
 import { getAppkeyAndTypeByHeader } from '../utils/headersUtils';
 import { delay } from '../utils';
+import AppsType from '../models/AppsType';
+import Records from '../models/Records';
 
 /**
  * @desc 解析文件
@@ -55,7 +59,7 @@ function createChunkMD5(buffer) {
 // 生成组合&分片路径的规则
 function generateGroupAndChunkPathRules(appKey, uploadType) {
   return {
-    group: `${config.groupRelativePath}/${appKey}/${uploadType}`,
+    group: `./${config.groupDir}/${appKey}/${uploadType}`,
     chunk: `./chunks/${appKey}/${uploadType}`
   };
 }
@@ -96,7 +100,8 @@ async function getMergeGroupDirPath(appKey, uploadType) {
 
 // 生成文件名字（包含后缀
 function createSaveFileName(fileName, fileExtName) {
-  return fileExtName ? `${fileName}.${fileExtName}` : fileName;
+  const newName = nanoid();
+  return fileExtName ? `${newName}.${fileExtName}` : newName;
 }
 
 // 根据name & ext & dir 获取 组合的filePath
@@ -133,6 +138,11 @@ export async function uploadChunkFile(ctx) {
   return { md5, fileName };
 }
 
+function createStorageId(appKey, uploadType, filePath) {
+  const fileName = path.basename(filePath);
+  const groupPath = generateGroupAndChunkPathRules(appKey, uploadType).group.replace('./', '');
+  return `${groupPath}/${fileName}`;
+}
 // 合并文件
 export async function combineChunkFile(data, signature) {
   // const data = {
@@ -177,26 +187,53 @@ export async function combineChunkFile(data, signature) {
   // 合并文件流
   streamMergeRecursive(chunkFilePaths, ws, (type, d) => {
     if (type === 'end') count += 1;
-    const isEnd = count === length;
-    const status = isEnd ? 'success' : 'combining';
-    // TODO 接入真实redis缓存中，保存状态
-    setRedisItem(getUploadCombineStatusKey(signature), type === 'error' ? 'fail' : status);
+
     console.log('type', type);
     console.log('data', d);
+    const isEnd = count === length;
+    // TODO 接入真实redis缓存中，保存状态
+    setRedisItem(getUploadCombineStatusKey(signature), type === 'error' ? 'fail' : 'combining');
     if (isEnd) {
       newResolve({ msg: '合并结束' });
     }
   });
 
   return newPromise.then(async (resp) => {
-    // TODO 故意增加三秒延迟
-    await delay();
     console.log('resp------>', resp);
-    return resp;
+    // 增加1s结果延迟，后续可移除
+    await delay(1000);
+    // 寻找上传的 AppsType
+    const appsTypeModel = await AppsType.findOne({ where: { name: uploadType } });
+    const data = {
+      storageId: createStorageId(appkey, uploadType, filePath),
+      fileExtName,
+      metaInfo: {}
+    };
+    // 在数据库中创建数据
+    const record = await Records.create({ ...data, metaInfo: JSON.stringify(data.metaInfo) });
+    // 增加关联性
+    record.setAppsType(appsTypeModel);
+    // 将状态改为success
+    setRedisItem(getUploadCombineStatusKey(signature), 'success');
+
+    const result = {
+      ...data,
+      uploadId: record.id,
+      fileType: appsTypeModel.uploadType,
+      freeFileUrl: `http://${ip.address()}:${config.port}/${config.name}/${data.storageId}`
+    };
+    // 结果存储在redis中
+    setRedisItem(getUploadCombineResult(signature), result);
+    // 返回结果
+    return result;
   });
 }
 
 // 获取合并状态的缓存key
 export function getUploadCombineStatusKey(signature) {
   return `${signature}_merge_status`;
+}
+
+export function getUploadCombineResult(signature) {
+  return `${signature}_merge_result`;
 }

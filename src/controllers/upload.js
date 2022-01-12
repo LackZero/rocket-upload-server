@@ -1,5 +1,10 @@
 import ip from 'ip';
-import { combineChunkFile, getUploadCombineStatusKey, uploadChunkFile } from '../services/upload';
+import {
+  combineChunkFile,
+  getUploadCombineResult,
+  getUploadCombineStatusKey,
+  uploadChunkFile
+} from '../services/upload';
 import { throwUploadErr, uploadResponse } from '../utils/uploadResponse';
 import { getUploadHeadersSignature } from '../utils/headersUtils';
 import { getRedisItem, setRedisItem } from '../utils/temRedis';
@@ -19,7 +24,6 @@ export async function handleCombineChunkFile(ctx) {
   setRedisItem(`${signature}_data`, data);
   //  定时器，1S 中没响应直接返回100016，否则返回成功合并
   const result = await Promise.race([delay(1000), combineChunkFile(data, signature)]);
-  console.log('result', result);
   if (!result) {
     uploadResponse.info(ctx, '100016');
   } else {
@@ -38,9 +42,11 @@ export async function handleGetCombineChunkStatus(ctx) {
     case 'combining':
       uploadResponse.info(ctx, '100016');
       break;
-    case 'success':
-      uploadResponse.success(ctx, '合并成功');
+    case 'success': {
+      const data = getRedisItem(getUploadCombineResult(statusKey));
+      uploadResponse.success(ctx, data);
       break;
+    }
     case 'fail':
     default:
       throwUploadErr('800003');
