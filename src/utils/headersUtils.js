@@ -13,3 +13,8 @@ const HEADERS = [
 ];
 
 export const getUploadHeadersSignature = (headers) => headers[`${headersPrefix}-signature`];
+
+export const getAppkeyAndTypeByHeader = (headers) => ({
+  appKey: headers[`${headersPrefix}-app-key`],
+  uploadType: headers[`${headersPrefix}-upload-type`]
+});

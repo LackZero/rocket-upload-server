@@ -9,6 +9,7 @@ import config from '../../config';
 import { streamMergeRecursive } from '../utils/streamUtils';
 import { setRedisItem } from '../utils/temRedis';
 import { throwUploadErr } from '../utils/uploadResponse';
+import { getAppkeyAndTypeByHeader } from '../utils/headersUtils';
 
 /**
  * @desc 解析文件
@@ -50,34 +51,52 @@ function createChunkMD5(buffer) {
   return md5Crypto.digest('hex');
 }
 
-// TODO 生成保存的文件路径(使用 appkey，uploadType
-// eslint-disable-next-line no-unused-vars
-async function createSaveFileDirPath(appKey, uploadType) {
+// 生成组合&分片路径的规则
+function generateGroupAndChunkPathRules(appKey, uploadType) {
+  return { group: `./${appKey}/${uploadType}/group`, chunk: `./${appKey}/${uploadType}/chunks` };
+}
+
+// 获取静态资源的根目录
+async function getAssetsDirPath() {
   const dir = path.resolve(config.assetsPath, '');
-  // 不存在自动新建，并返回路径
-  const dirPath = (await fse.ensureDir(dir)) || dir;
+  // 不存在自动新建，并返回的是第一个目录路径
+  await fse.ensureDir(dir);
+  // const dirPath = (await fse.ensureDir(dir)) || dir;
 
-  return dirPath;
+  return dir;
 }
 
-// TODO 生成保存切割的文件路径(使用 appkey，uploadType
-// eslint-disable-next-line no-unused-vars
-async function createSaveChunkDirPath(appKey, uploadType) {
-  const fileDirPath = await createSaveFileDirPath(appKey, uploadType);
-  const dir = path.resolve(fileDirPath, './tem');
+// 生成保存切割的文件目录(使用 appkey，uploadType
+async function getSaveChunkDirPath(appKey, uploadType) {
+  const assetsPath = await getAssetsDirPath();
+  const { chunk } = generateGroupAndChunkPathRules(appKey, uploadType);
+  const dir = path.resolve(assetsPath, chunk);
   // 不存在自动新建，并返回路径
-  const dirPath = (await fse.ensureDir(dir)) || dir;
+  // 如果创建的话返回的是第一个目录路径
+  // http://nodejs.cn/api/fs.html#fs_fs_mkdir_path_options_callback
+  await fse.ensureDir(dir);
 
-  return dirPath;
+  return dir;
 }
 
-// 生成保存的文件路径
+// 获取合并文件夹的根目录
+async function getMergeGroupDirPath(appKey, uploadType) {
+  const assetsPath = await getAssetsDirPath();
+  const { group } = generateGroupAndChunkPathRules(appKey, uploadType);
+  const dir = path.resolve(assetsPath, group);
+  // 不存在自动新建，并返回路径
+  await fse.ensureDir(dir);
+
+  return dir;
+}
+
+// 生成文件名字（包含后缀
 function createSaveFileName(fileName, fileExtName) {
   return fileExtName ? `${fileName}.${fileExtName}` : fileName;
 }
 
-// 生成保存的文件路径
-function createSaveFilePath(dirPath, fileName, fileExtName) {
+// 根据name & ext & dir 获取 组合的filePath
+function getFilePathWithDirAndNameAndExt(dirPath, fileName, fileExtName) {
   const fileInfoName = createSaveFileName(fileName, fileExtName);
   return path.resolve(dirPath, fileInfoName);
 }
@@ -104,7 +123,9 @@ export async function uploadChunkFile(ctx) {
   const buffer = await parseFile(ctx);
   const md5 = createChunkMD5(buffer);
   const fileName = createBufferFileName(md5);
-  const dirName = await createSaveChunkDirPath();
+  const { appKey, uploadType } = getAppkeyAndTypeByHeader(ctx.request.headers);
+  const dirName = await getSaveChunkDirPath(appKey, uploadType);
+  console.log('dirName', dirName, appKey, uploadType);
   saveBufferToDir(dirName, fileName, buffer);
   return { md5, fileName };
 }
@@ -128,10 +149,12 @@ export async function combineChunkFile(data, signature) {
   //     'e2802fb41ebe047782ec5599da9eb494_chunk',
   //   ],
   // };
-  const { ctxList, fileName, fileExtName } = data;
-  const chunkDirPath = await createSaveChunkDirPath();
-  const dirPath = await createSaveFileDirPath();
-  const filePath = createSaveFilePath(dirPath, fileName, fileExtName);
+  const {
+    ctxList, fileName, fileExtName, appkey, uploadType
+  } = data;
+  const chunkDirPath = await getSaveChunkDirPath(appkey, uploadType);
+  const dirPath = await getMergeGroupDirPath(appkey, uploadType);
+  const filePath = getFilePathWithDirAndNameAndExt(dirPath, fileName, fileExtName);
   const chunkFilePaths = ctxList.map((name) => ({
     name,
     filePath: path.resolve(chunkDirPath, name)
