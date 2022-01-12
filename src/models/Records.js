@@ -2,6 +2,7 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../utils/sequelize';
 import AppsType from './AppsType';
 
+// 存储上传数据的表
 const Records = sequelize.define(
   'records',
   {

@@ -7,6 +7,7 @@ import { sequelize } from '../utils/sequelize';
 // define() 方法接受三个参数
 // 表名，表字段的定义和表的配置信息
 // 与Apps_type 有所关联
+// 存储APP的表
 const Apps = sequelize.define(
   'apps',
   {

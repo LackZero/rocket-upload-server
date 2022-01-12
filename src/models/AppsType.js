@@ -3,7 +3,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../utils/sequelize';
 import Apps from './Apps';
-// app 对应拥有的上传类型
+// 存储 App 对应拥有的上传类型的表
 const AppsType = sequelize.define(
   'apps_type',
   {
