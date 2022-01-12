@@ -48,9 +48,16 @@ const AppsType = sequelize.define(
         // }
         // console.log('options', options);
       },
-      async beforeDestroy(model) {
+      async beforeDestroy(instance) {
         // 将删除标识的删除状态设为id（推荐，使用主键确保不会发生索引冲突，并且实现简单）
-        await model.update({ logicDeletedId: model.id });
+        const calls = [instance.update({ logicDeletedId: instance.id })];
+        console.log('instance', instance);
+        // 删除 关联的 records 实例
+        const records = await instance.getRecords();
+        records.forEach((model) => {
+          calls.push(model.destroy());
+        });
+        await Promise.all(calls);
       },
       //  使用where 条件判断时 会触发下面批量删除赋值
       //  setterMethods 对deletedAt 字段无效，放弃挣扎了
