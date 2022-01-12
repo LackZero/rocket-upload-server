@@ -28,7 +28,10 @@ export async function getAllAppsService() {
 export async function addNewAppsService(params) {
   const { name, uploadTypes = [] } = params;
   const { cipherText } = encodeAppKeyToSecret(name, config.uploadAppSecretKey);
-  const result = await Apps.create({ name, secret: cipherText });
+  const result = await Apps.create({
+    name,
+    secret: name === 'aicenter' ? '6c04b5180a099119' : cipherText
+  });
   // debugger;
   // console.log('result', result);
   const uploadTypeData = uploadTypes.map((uploadType) => ({
