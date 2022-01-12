@@ -53,7 +53,10 @@ function createChunkMD5(buffer) {
 
 // 生成组合&分片路径的规则
 function generateGroupAndChunkPathRules(appKey, uploadType) {
-  return { group: `./${appKey}/${uploadType}/group`, chunk: `./${appKey}/${uploadType}/chunks` };
+  return {
+    group: `${config.groupRelativePath}/${appKey}/${uploadType}`,
+    chunk: `./chunks/${appKey}/${uploadType}`
+  };
 }
 
 // 获取静态资源的根目录

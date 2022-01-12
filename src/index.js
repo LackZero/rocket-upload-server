@@ -8,8 +8,9 @@ import config from '../config';
 import router from './routes';
 import healthCheck from './middlewares/healthCheck';
 import errorHandler from './middlewares/errors';
+import { getGroupAbsolutePath } from '../config/assetsUtils';
 
-const { port, apiDocPrefix } = config;
+const { port, apiDocPrefix, apiGroupAssetsPrefix } = config;
 
 const app = new Koa();
 
@@ -36,6 +37,14 @@ app.use(
 app.use(
   koaStaticCache(path.resolve(__dirname, '../apidoc'), {
     prefix: apiDocPrefix // 如果当前请求的url是以 /public开始，则作为静态资源请求
+  })
+);
+
+// 缓存静态上传文件后的资源
+app.use(
+  koaStaticCache(getGroupAbsolutePath(), {
+    dynamic: true, // 动态加载
+    prefix: apiGroupAssetsPrefix // 如果当前请求的url是以 /{{prefix}} 开始，则作为静态资源请求
   })
 );
 
