@@ -125,7 +125,6 @@ export async function uploadChunkFile(ctx) {
   const fileName = createBufferFileName(md5);
   const { appKey, uploadType } = getAppkeyAndTypeByHeader(ctx.request.headers);
   const dirName = await getSaveChunkDirPath(appKey, uploadType);
-  console.log('dirName', dirName, appKey, uploadType);
   saveBufferToDir(dirName, fileName, buffer);
   return { md5, fileName };
 }
