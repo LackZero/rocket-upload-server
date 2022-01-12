@@ -8,3 +8,5 @@ export const setRedisItem = (key, value) => {
 export const getRedisItem = (key) => redisObj[key];
 
 export const delRedisItem = (key) => delete redisObj[key];
+
+export const getAllRedis = () => redisObj;
