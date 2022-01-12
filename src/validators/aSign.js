@@ -53,6 +53,8 @@ export async function uploadHeadersValidator(ctx, next) {
   });
   // 检测签名是否一致
   if (signature !== headers[`${headersPrefix}-signature`]) {
+    console.log('\nsignature:', signature);
+    console.log('headers signature:', headers[`${headersPrefix}-signature`]);
     throwUploadErr('900001');
   }
 

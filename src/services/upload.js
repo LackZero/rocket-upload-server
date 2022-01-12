@@ -10,6 +10,7 @@ import { streamMergeRecursive } from '../utils/streamUtils';
 import { setRedisItem } from '../utils/temRedis';
 import { throwUploadErr } from '../utils/uploadResponse';
 import { getAppkeyAndTypeByHeader } from '../utils/headersUtils';
+import { delay } from '../utils';
 
 /**
  * @desc 解析文件
@@ -161,6 +162,12 @@ export async function combineChunkFile(data, signature) {
     name,
     filePath: path.resolve(chunkDirPath, name)
   }));
+  // 让合并结果promise化
+  let newResolve;
+  const newPromise = new Promise((resolve) => {
+    newResolve = resolve;
+  });
+
   const { length } = chunkFilePaths;
   // 创建写入流
   const ws = createWriteStream(filePath);
@@ -170,11 +177,22 @@ export async function combineChunkFile(data, signature) {
   // 合并文件流
   streamMergeRecursive(chunkFilePaths, ws, (type, d) => {
     if (type === 'end') count += 1;
-    const status = count === length ? 'success' : 'combining';
+    const isEnd = count === length;
+    const status = isEnd ? 'success' : 'combining';
     // TODO 接入真实redis缓存中，保存状态
     setRedisItem(getUploadCombineStatusKey(signature), type === 'error' ? 'fail' : status);
     console.log('type', type);
     console.log('data', d);
+    if (isEnd) {
+      newResolve({ msg: '合并结束' });
+    }
+  });
+
+  return newPromise.then(async (resp) => {
+    // TODO 故意增加三秒延迟
+    await delay();
+    console.log('resp------>', resp);
+    return resp;
   });
 }
 
