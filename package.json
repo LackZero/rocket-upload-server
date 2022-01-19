@@ -72,6 +72,8 @@
     "nanoid": "^3.1.30",
     "node-fetch": "^2.6.1",
     "raw-body": "^2.4.2",
+    "redis": "^4.0.2",
+    "redis-commands": "^1.7.0",
     "sequelize": "^6.12.4"
   }
 }

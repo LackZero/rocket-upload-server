@@ -5,6 +5,7 @@
   },
   "rules": {
     "no-use-before-define": "warn",
-    "no-shadow": "warn"
+    "no-shadow": "warn",
+    "no-underscore-dangle": ["error", { "allowAfterThis": true }]
   }
 }
