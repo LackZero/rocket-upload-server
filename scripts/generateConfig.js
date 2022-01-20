@@ -34,11 +34,12 @@ function writeConfig(env) {
   const configContent = `
 import path from 'path';
 import databaseConfig from './database-config/database.${env}';
+import redisConfig from './redis-config/redis.${env}';
 const data = ${JSON.stringify(config, null, '\t')};
 const port = process.env.NODE_PORT || data.port;
 const env = process.env.NODE_ENV || 'dev';
 const assetsPath = env === 'dev' ? path.resolve(__dirname, '../assets') : data.assetsPath[env];
-const config = { ...data, port, env, database: databaseConfig, assetsPath };
+const config = { ...data, port, env, database: databaseConfig, redis:redisConfig, assetsPath };
 export default config;
   `;
   const dist = path.resolve(__dirname, '../config/index.js');

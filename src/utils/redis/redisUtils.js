@@ -1,11 +1,13 @@
 import commands from 'redis-commands';
-import RedisConnect from './index';
+import RedisConnect from './connect';
+import config from '../../../config';
 
 class RedisUtils {
   constructor(options) {
     this.client = null;
-    this.proxy = null;
-
+    // 设定代理
+    this.proxy = this._createMethodProxy();
+    // 初始化client
     this._init(options);
   }
 
@@ -21,11 +23,9 @@ class RedisUtils {
     return this.instance;
   }
 
-  _init(options) {
-    const redis = new RedisConnect(options);
+  async _init(options) {
+    const redis = await RedisConnect.init(options);
     this.client = redis.client;
-    // 设定代理
-    this.proxy = this._createMethodProxy();
   }
 
   _createMethodProxy() {
@@ -62,7 +62,7 @@ class RedisUtils {
   }
 }
 
-const redis = RedisUtils.getInstance({}).proxy;
+const redis = RedisUtils.getInstance(config.redis).proxy;
 
 // redis.getJson();
 // 只对外暴露一个接口
