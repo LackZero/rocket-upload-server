@@ -12,7 +12,7 @@ import {
 
 const router = new Router({ prefix: '/tem' });
 
-router.get('/redis-list', handleGetAllRedisData);
+router.post('/redis-list', handleGetAllRedisData);
 router.post('/set-redis', handleSetRedisDataByKey);
 router.post('/get-redis', handleGetRedisDataByKey);
 

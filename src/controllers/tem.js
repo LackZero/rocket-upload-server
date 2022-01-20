@@ -1,9 +1,10 @@
 import response from '../utils/response';
-import { getAllRedis } from '../utils/temRedis';
 import redis from '../utils/redis/redisUtils';
 
 export async function handleGetAllRedisData(ctx) {
-  response.success(ctx, getAllRedis());
+  const { params } = ctx.request.body;
+  const data = await redis.scan(params);
+  response.success(ctx, data);
 }
 
 export async function handleGetRedisDataByKey(ctx) {
